@@ -14,6 +14,7 @@ module DCPL.PostFixEval
 
 where
 
+import Control.Monad.Error(Error, strMsg, throwError)
 import DCPL.PostFixParser
 import Text.ParserCombinators.Parsec hiding (spaces)
 
@@ -22,6 +23,9 @@ data PostFixError = EvalError String
                   | PostFixParseError ParseError
 
 type ThrowsError = Either PostFixError
+
+instance Error PostFixError where
+  strMsg = EvalError
 
 instance Show PostFixError where
   show (EvalError message) = "PostFixError: " ++ message
@@ -41,34 +45,36 @@ type Stack = [Command]
 
 -- | User-level function for convenient usage.
 postfix :: String -> String
-postfix toEval = case evalToInt toEval of
-                     Right res  -> "  -> " ++ show res
-                     Left err   -> show err
+postfix toEval = either (("  -> " ++) . show)
+                        show
+                        (evalToInt toEval)
 
 
 evalToInt :: String
           -> ThrowsError Int
-evalToInt toEval = case evalString toEval of
-    Left err        -> Left err
-    Right (Num n:_) -> Right n
-    Right stack     ->
+evalToInt toEval = do
+  res <- evalString toEval
+  case res of
+    (Num n:_) -> return n
+    stack     ->
       evalError $ "The value at the top of the final is not an integer. Final stack:\n -> "
-               ++ show stack
+                ++ show stack
 
 
 -- | Evaluates PostFix program given as a string.
 evalString :: String            -- ^ commands to be executed as a string
            -> ThrowsError Stack -- ^ result
-evalString toEval = case parse parseList "postfix" toEval of
-                      Left err     -> Left $ PostFixParseError err
-                      Right parsed -> eval [parsed, Exec] []
+evalString toEval = either
+  (throwError . PostFixParseError)
+  (\parsed -> eval [parsed, Exec] [])
+  (parse parseList "postfix" toEval)
 
 
 -- | Evaluates PostFix program given as a list of commands.
 eval :: [Command]         -- ^ commands to be executed
      -> Stack             -- ^ currenct stack
      -> ThrowsError Stack -- ^ result
-eval [] stack = Right stack
+eval [] stack = return stack
 eval (c:cs) stack = case c of
   n@(Num _) -> eval cs $ n:stack
   s@(Seq _) -> eval cs $ s:stack
@@ -127,5 +133,5 @@ binEval _ stack _ = evalError $ "Not enough numbers for binary operation (stack:
 
 
 evalError :: String -> ThrowsError a
-evalError = Left . EvalError
+evalError = throwError . EvalError
 

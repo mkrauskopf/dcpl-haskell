@@ -25,9 +25,10 @@ runTests = runTestTT . TestList . map TestCase
 
 
 assertParsed :: String -> Command -> Assertion
-assertParsed toParse expected = case parse parseList "postfix" toParse of
-    Left err -> assertFailure $ show err
-    Right parsed -> assertEqual "parser failed" expected parsed
+assertParsed toParse expected = either
+    (assertFailure . show)
+    (assertEqual "parser failed" expected)
+    (parse parseList "postfix" toParse)
 
 
 main :: IO Counts

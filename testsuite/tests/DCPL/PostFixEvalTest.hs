@@ -28,18 +28,20 @@ assertEvaluatedList :: [(String, [Command])] -> [Assertion]
 assertEvaluatedList = map $ uncurry assertEvaluated
 
 assertEvaluated :: String -> Stack -> Assertion
-assertEvaluated toEval expected = case evalString toEval of
-    Left err -> assertFailure $ show err
-    Right parsed -> assertEqual "parser failed" expected parsed
+assertEvaluated toEval expected = either
+    (assertFailure . show)
+    (assertEqual "parser failed" expected)
+    (evalString toEval)
 
 
 assertTopStackNumberList :: [(String, Int)] -> [Assertion]
 assertTopStackNumberList = map $ uncurry assertTopStackNumber
 
 assertTopStackNumber :: String -> Int -> Assertion
-assertTopStackNumber toEval expected = case evalString toEval of
-    Left err -> assertFailure $ show err
-    Right parsed -> assertEqual "parser failed" (Num expected) $ head parsed
+assertTopStackNumber toEval expected = either
+    (assertFailure . show)
+    (assertEqual "parser failed" (Num expected) . head)
+    (evalString toEval)
 
 
 assertPostFixesErrors :: [String] -> [Assertion]
