@@ -68,6 +68,10 @@ main = runTests
         , ("1 2 3", 3)
         , ("1 2 3 pop", 2)
         , ("1 2 swap 3 pop", 1)
+        , ("5 1 nget mul", 25)
+
+         -- x c b a
+        , ("2 5 4 3 4 nget 5 nget mul mul swap 4 nget mul add add", 25) -- a*(x^2) + b*x + c
         ]
    ++ assertPostFixesErrors
         -- erroneous program
@@ -78,6 +82,8 @@ main = runTests
         , "(5 (2 mul) exec) 3 swap"
         , "3 4 mul add"
         , "5 4 4 sub div"
+        , "1 nget"
+        , "(2 1 sub) nget mul"
         ]
     )
 

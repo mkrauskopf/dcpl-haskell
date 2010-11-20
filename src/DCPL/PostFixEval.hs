@@ -81,6 +81,7 @@ eval (c:cs) stack = case c of
   Pop       -> pop cs stack
   Swap      -> swap cs stack
   Sel       -> sel cs stack
+  NGet      -> nget cs stack
   Exec      -> exec cs stack
   _         -> evalError $ "Unknown command: " ++ show c
   where
@@ -101,6 +102,15 @@ sel :: [Command] -> Stack -> ThrowsError Stack
 sel cs (x:y:Num z:xs) = let res = if z == 0 then x else y
                         in eval cs (res:xs)
 sel _ stack = evalError $ "Not enough values to perform selection " ++ show stack
+
+
+nget :: [Command] -> Stack -> ThrowsError Stack
+nget cs stack@(Num i:xs)
+  | length xs >= i = case xs!!(i-1) of
+                       n@(Num x) -> eval cs (n:xs)
+                       _         -> evalError "blah"
+  | otherwise = evalError $ "Index " ++ show i ++ " too large for nget operation. Stack: " ++ show stack
+nget _ stack = evalError $ "Non-integer value on the top of the stack during 'nget': " ++ show stack
 
 
 exec :: [Command] -> Stack -> ThrowsError Stack

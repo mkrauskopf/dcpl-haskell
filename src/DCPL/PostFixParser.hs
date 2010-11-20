@@ -20,7 +20,7 @@ import Data.Functor((<$>))
 -- | Commands understood by the PostFix stack language.
 data Command = Num Int
              | Lt | Gt
-             | Pop | Swap | Sel | Nget | Exec
+             | Pop | Swap | Sel | NGet | Exec
              | Sub | Add | Mul | Div | Rem
              | Seq [Command] -- executable sequence
   deriving (Show, Eq)
@@ -47,7 +47,7 @@ parseInstruction = inst "lt" Lt
                <|> inst "pop" Pop
                <|> inst "swap" Swap
                <|> inst "sel" Sel
-               <|> inst "nget" Nget
+               <|> inst "nget" NGet
                <|> inst "exec" Exec
 
                <|> inst "sub" Sub
