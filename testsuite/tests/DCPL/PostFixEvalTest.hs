@@ -54,7 +54,7 @@ assertPostFixError toEval =
   case result of
     Right res  -> assertFailure $ errorMsg res
     _          -> return ()
-  where result = evalString toEval
+  where result = evalToInt toEval
         message = "commands '" ++ toEval ++ "' -> " ++ show result
         errorMsg res = "expected error from '" ++ toEval ++ "', got result: " ++ show res
 
