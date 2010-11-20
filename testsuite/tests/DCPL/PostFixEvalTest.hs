@@ -84,6 +84,7 @@ main = runTests
         , "5 4 4 sub div"
         , "1 nget"
         , "(2 1 sub) nget mul"
+        , "(2 1 sub) 1 nget mul"
         ]
     )
 
