@@ -14,8 +14,8 @@ module DCPL.PostFixParser
 
 where
 
-import Text.ParserCombinators.Parsec hiding (spaces)
 import Data.Functor((<$>))
+import Text.ParserCombinators.Parsec hiding (spaces)
 
 -- | Commands understood by the PostFix stack language.
 data Command = Num Int
@@ -62,7 +62,7 @@ parseInstruction = inst "lt" Lt
 parseSequence :: Parser Command
 parseSequence = do
     char '('
-    seq <- parseList
+    seq' <- parseList
     char ')'
-    return seq
+    return seq'
 

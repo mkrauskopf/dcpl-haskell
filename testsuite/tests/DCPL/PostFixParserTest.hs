@@ -14,7 +14,6 @@ module DCPL.PostFixParserTest
 where
 
 import DCPL.PostFixParser
-import System.Exit(exitWith, ExitCode(..))
 import Test.HUnit.Base
 import Test.HUnit.Text(runTestTT)
 import Text.ParserCombinators.Parsec.Prim(parse)
@@ -31,6 +30,7 @@ assertParsed toParse expected = case parse parseList "postfix" toParse of
     Right parsed -> assertEqual "parser failed" expected parsed
 
 
+main :: IO Counts
 main = runTests
     [ assertParsed "1 2 add" $ Seq [Num 1,Num 2,Add]
     , assertParsed "1 2 sub" $ Seq [Num 1,Num 2,Sub]

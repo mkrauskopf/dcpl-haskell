@@ -15,10 +15,8 @@ where
 
 import DCPL.PostFixEval
 import DCPL.PostFixParser
-import System.Exit(exitWith, ExitCode(..))
 import Test.HUnit.Base
 import Test.HUnit.Text(runTestTT)
-import Text.ParserCombinators.Parsec.Prim(parse)
 
 -- Compose test cases from the given assertion and runs them. Reports result to
 -- the terminal using @runTests@ HUnit fucntion.
@@ -55,10 +53,10 @@ assertPostFixError toEval =
     Right res  -> assertFailure $ errorMsg res
     _          -> return ()
   where result = evalToInt toEval
-        message = "commands '" ++ toEval ++ "' -> " ++ show result
         errorMsg res = "expected error from '" ++ toEval ++ "', got result: " ++ show res
 
 
+main :: IO Counts
 main = runTests
     ( assertTopStackNumberList
         -- (program, expected result on the top of the stack)

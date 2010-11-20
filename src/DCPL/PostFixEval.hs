@@ -14,9 +14,8 @@ module DCPL.PostFixEval
 
 where
 
-import Text.ParserCombinators.Parsec hiding (spaces)
-import Data.Functor((<$>))
 import DCPL.PostFixParser
+import Text.ParserCombinators.Parsec hiding (spaces)
 
 
 data PostFixError = EvalError String
@@ -50,9 +49,9 @@ postfix toEval = case evalToInt toEval of
 evalToInt :: String
           -> ThrowsError Int
 evalToInt toEval = case evalString toEval of
-    Left err         -> Left err
-    Right (Num n:xs) -> Right n
-    Right stack      ->
+    Left err        -> Left err
+    Right (Num n:_) -> Right n
+    Right stack     ->
       evalError $ "The value at the top of the final is not an integer. Final stack:\n -> "
                ++ show stack
 
@@ -84,13 +83,11 @@ eval (c:cs) stack = case c of
   NGet      -> nget cs stack
   Exec      -> exec cs stack
   _         -> evalError $ "Unknown command: " ++ show c
-  where
-    stackS    = "(stack: " ++ show stack ++ ")"
 
 
 pop :: [Command] -> Stack -> ThrowsError Stack
 pop _ []      = evalError "Cannot perform 'pop' operation on empty stack"
-pop cs (x:xs) = eval cs xs
+pop cs (_:xs) = eval cs xs
 
 
 swap :: [Command] -> Stack -> ThrowsError Stack
@@ -105,22 +102,22 @@ sel _ stack = evalError $ "Not enough values to perform selection " ++ show stac
 
 
 nget :: [Command] -> Stack -> ThrowsError Stack
-nget cs stack@(Num i:xs)
+nget cs (Num i:xs)
   | length xs >= i = case xs!!(i-1) of
-      n@(Num x) -> eval cs (n:xs)
-      v         -> evalError $ "Not a numeral on the index " ++ show i ++ " of the stack: " ++ show xs
+      n@(Num _) -> eval cs (n:xs)
+      _         -> evalError $ "Not a numeral on the index " ++ show i ++ " of the stack: " ++ show xs
   | otherwise = evalError $ "Index " ++ show i ++ " too large for nget operation. Stack: " ++ show xs
 nget _ stack = evalError $ "Non-integer value on the top of the stack during 'nget': " ++ show stack
 
 
 exec :: [Command] -> Stack -> ThrowsError Stack
 exec cs (Seq cmds:xs) = eval (cmds ++ cs) xs
-exec cs stack@(_:xs)  = evalError $ "Seq expected on top of the stack while performing Exec." ++ show stack
+exec _ stack@(_:_)    = evalError $ "Seq expected on top of the stack while performing Exec." ++ show stack
 exec _ stack          = evalError $ "Not enough values to perform sequence execution " ++ show stack
 
 
 binEval0 :: (Int -> Int -> Int) -> Stack -> [Command] -> ThrowsError Stack
-binEval0 _ (Num 0:Num y:xs) _ = evalError "Divide by zero"
+binEval0 _ (Num 0:Num _:_) _ = evalError "Divide by zero"
 binEval0 op stack cs = binEval op stack cs
 
 
