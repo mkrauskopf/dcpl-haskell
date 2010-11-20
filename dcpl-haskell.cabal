@@ -1,0 +1,26 @@
+Name:                dcpl-haskell
+Version:             0.1
+Stability:           Experimental
+
+Synopsis:            Haskell companion for "Design Concepts in Programming Languages" textbook
+Category:            Language
+
+Author:              Martin Krauskopf <martin.krauskopf@gmail.com>
+Maintainer:          Martin Krauskopf <martin.krauskopf@gmail.com>
+Homepage:            http://github.com/mkrauskopf/dcpl-haskell
+
+License:             BSD3
+License-file:        LICENSE
+
+Build-type:          Simple
+Cabal-version:       >=1.6
+
+Library
+  Build-Depends:
+      base >= 4 && < 5,
+      parsec
+  Exposed-Modules:
+      DCPL.PostFixEval
+  Ghc-Options: -Wall -Werror -fno-warn-type-defaults -fno-warn-unused-do-bind
+  Hs-Source-Dirs: src
+
