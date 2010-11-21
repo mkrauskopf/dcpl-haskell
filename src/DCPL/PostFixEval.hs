@@ -75,17 +75,19 @@ eval [] stack = return stack
 eval (c:cs) stack = case c of
   n@(Num _) -> eval cs $ n:stack
   s@(Seq _) -> eval cs $ s:stack
-  Add       -> binEval (+) stack cs
-  Sub       -> binEval (-) stack cs
-  Mul       -> binEval (*) stack cs
-  Div       -> binEval0 quot stack cs
-  Rem       -> binEval0 rem stack cs
+  Add       -> binNumEval (+) stack cs
+  Sub       -> binNumEval (-) stack cs
+  Mul       -> binNumEval (*) stack cs
+  Div       -> binNumEval0 quot stack cs
+  Rem       -> binNumEval0 rem stack cs
+  Lt        -> binBoolEval (<) stack cs
+  Gt        -> binBoolEval (>) stack cs
+  Eq        -> binBoolEval (==) stack cs
   Pop       -> pop cs stack
   Swap      -> swap cs stack
   Sel       -> sel cs stack
   NGet      -> nget cs stack
   Exec      -> exec cs stack
-  _         -> evalError $ "Unknown command: " ++ show c
 
 
 pop :: [Command] -> Stack -> ThrowsError Stack
@@ -121,14 +123,21 @@ exec _ stack@(_:_)    = evalErrorS "Seq expected on top of the stack while perfo
 exec _ stack          = evalErrorS "Not enough values to perform sequence execution" stack
 
 
-binEval0 :: (Int -> Int -> Int) -> Stack -> [Command] -> ThrowsError Stack
-binEval0 _ (Num 0:Num _:_) _ = evalError "Divide by zero"
-binEval0 op stack cs = binEval op stack cs
+binNumEval0 :: (Int -> Int -> Int) -> Stack -> [Command] -> ThrowsError Stack
+binNumEval0 _ (Num 0:Num _:_) _ = evalError "Divide by zero"
+binNumEval0 op stack cs = binNumEval op stack cs
 
 
-binEval :: (Int -> Int -> Int) -> Stack -> [Command] -> ThrowsError Stack
-binEval binOp (Num x:Num y:xs) cs = eval cs ((Num $ binOp y x):xs)
-binEval _ stack _ = evalErrorS "Not enough numbers for binary operation" stack
+binNumEval :: (Int -> Int -> Int) -> Stack -> [Command] -> ThrowsError Stack
+binNumEval binOp (Num x:Num y:xs) cs = eval cs ((Num $ binOp y x):xs)
+binNumEval _ stack _ = evalErrorS "Not enough numbers for binary operation" stack
+
+
+binBoolEval :: (Int -> Int -> Bool) -> Stack -> [Command] -> ThrowsError Stack
+binBoolEval binOp (Num x:Num y:xs) cs =
+  let res = if binOp y x then 1 else 0
+   in eval cs (Num res:xs)
+binBoolEval _ stack _ = evalErrorS "Not enough numbers for binary operation" stack
 
 
 -- | Returns 'EvalError' with the given message.

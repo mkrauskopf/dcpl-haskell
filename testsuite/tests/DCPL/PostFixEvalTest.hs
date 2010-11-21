@@ -69,6 +69,10 @@ main = runTests
         , ("1 2 3 pop", 2)
         , ("1 2 swap 3 pop", 1)
         , ("5 1 nget mul", 25)
+        , ("3 4 lt", 1)
+        , ("5 4 lt", 0)
+        , ("5 4 gt", 1)
+        , ("3 3 eq 10 add", 11)
 
          -- x c b a
         , ("2 5 4 3 4 nget 5 nget mul mul swap 4 nget mul add add", 25) -- a*(x^2) + b*x + c

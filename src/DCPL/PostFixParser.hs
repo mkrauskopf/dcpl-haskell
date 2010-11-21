@@ -19,7 +19,7 @@ import Text.ParserCombinators.Parsec hiding (spaces)
 
 -- | Commands understood by the PostFix stack language.
 data Command = Num Int
-             | Lt | Gt
+             | Lt | Gt | Eq
              | Pop | Swap | Sel | NGet | Exec
              | Sub | Add | Mul | Div | Rem
              | Seq [Command] -- executable sequence
@@ -43,6 +43,7 @@ parseNumber = (Num . read) <$> many1 digit
 parseInstruction :: Parser Command
 parseInstruction = inst "lt" Lt
                <|> inst "gt" Gt
+               <|> inst "eq" Eq
 
                <|> inst "pop" Pop
                <|> inst "swap" Swap
