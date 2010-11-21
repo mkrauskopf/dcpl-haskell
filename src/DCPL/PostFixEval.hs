@@ -101,6 +101,8 @@ swap _ stack     = evalErrorS "Not enough values to swap" stack
 sel :: [Command] -> Stack -> ThrowsError Stack
 sel cs (x:y:Num z:xs) = let res = if z == 0 then x else y
                         in eval cs (res:xs)
+sel _ stack@(_:_:_:_) =
+  evalErrorS "Third parameter on the stack must be numeral to perform 'sel'" stack
 sel _ stack = evalErrorS "Not enough values to perform selection" stack
 
 
