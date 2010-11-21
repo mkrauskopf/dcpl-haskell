@@ -45,9 +45,7 @@ type Stack = [Command]
 
 -- | User-level function for convenient usage.
 postfix :: String -> String
-postfix toEval = either (("  -> " ++) . show)
-                        show
-                        (evalToInt toEval)
+postfix toEval = either show show (evalToInt toEval)
 
 
 evalToInt :: String
@@ -57,8 +55,7 @@ evalToInt toEval = do
   case res of
     (Num n:_) -> return n
     stack     ->
-      evalError $ "The value at the top of the final is not an integer. Final stack:\n -> "
-                ++ show stack
+      evalErrorS "The value at the top of the final stack is not an integer" stack
 
 
 -- | Evaluates PostFix program given as a string.
@@ -98,28 +95,28 @@ pop cs (_:xs) = eval cs xs
 
 swap :: [Command] -> Stack -> ThrowsError Stack
 swap cs (x:y:xs) = eval cs (y:x:xs)
-swap _ stack     = evalError $ "Not enough values to swap. Current stack:\n  " ++ show stack
+swap _ stack     = evalErrorS "Not enough values to swap" stack
 
 
 sel :: [Command] -> Stack -> ThrowsError Stack
 sel cs (x:y:Num z:xs) = let res = if z == 0 then x else y
                         in eval cs (res:xs)
-sel _ stack = evalError $ "Not enough values to perform selection " ++ show stack
+sel _ stack = evalErrorS "Not enough values to perform selection" stack
 
 
 nget :: [Command] -> Stack -> ThrowsError Stack
 nget cs (Num i:xs)
   | length xs >= i = case xs!!(i-1) of
       n@(Num _) -> eval cs (n:xs)
-      _         -> evalError $ "Not a numeral on the index " ++ show i ++ " of the stack: " ++ show xs
-  | otherwise = evalError $ "Index " ++ show i ++ " too large for nget operation. Stack: " ++ show xs
-nget _ stack = evalError $ "Non-integer value on the top of the stack during 'nget': " ++ show stack
+      _         -> evalErrorS ("Not a numeral on the index " ++ show i ++ " of the stack: ") xs
+  | otherwise = evalErrorS ("Index " ++ show i ++ " too large for nget operation. Stack: ") xs
+nget _ stack = evalErrorS "Non-integer value on the top of the stack during 'nget'" stack
 
 
 exec :: [Command] -> Stack -> ThrowsError Stack
 exec cs (Seq cmds:xs) = eval (cmds ++ cs) xs
-exec _ stack@(_:_)    = evalError $ "Seq expected on top of the stack while performing Exec." ++ show stack
-exec _ stack          = evalError $ "Not enough values to perform sequence execution " ++ show stack
+exec _ stack@(_:_)    = evalErrorS "Seq expected on top of the stack while performing Exec" stack
+exec _ stack          = evalErrorS "Not enough values to perform sequence execution" stack
 
 
 binEval0 :: (Int -> Int -> Int) -> Stack -> [Command] -> ThrowsError Stack
@@ -129,9 +126,16 @@ binEval0 op stack cs = binEval op stack cs
 
 binEval :: (Int -> Int -> Int) -> Stack -> [Command] -> ThrowsError Stack
 binEval binOp (Num x:Num y:xs) cs = eval cs ((Num $ binOp y x):xs)
-binEval _ stack _ = evalError $ "Not enough numbers for binary operation (stack: " ++ show stack ++ ")"
+binEval _ stack _ = evalErrorS "Not enough numbers for binary operation" stack
 
 
+-- | Returns 'EvalError' with the given message.
 evalError :: String -> ThrowsError a
 evalError = throwError . EvalError
+
+
+-- | Returns 'EvalError' with pretty-printed error message containing the given
+-- message and stack.
+evalErrorS :: String -> Stack -> ThrowsError a
+evalErrorS errMsg stack = evalError $ errMsg ++ "\n - stack: " ++ show stack
 
