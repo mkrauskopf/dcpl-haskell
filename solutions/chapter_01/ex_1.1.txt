@@ -1,0 +1,36 @@
+a. (postfix 0 10 (swap 2 mul sub) 1 swap exec)
+-19
+
+b. (postfix 0 (5 (2 mul) exec) 3 swap)
+PostFixError: The value at the top of the final stack is not an integer
+ - stack: [Seq [Num 5,Seq [Num 2,Mul],Exec],Num 3]
+
+c. (postfix 0 (() exec) exec)
+PostFixError: The value at the top of the final stack is not an integer
+ - stack: []
+
+d. (postfix 0 2 3 1 add mul sel)
+PostFixError: Not enough values to perform selection
+ - stack: [Num 8]
+
+e. (postfix 0 2 3 1 (add) (mul) sel)
+PostFixError: The value at the top of the final stack is not an integer
+ - stack: [Seq [Add],Num 3,Num 2]
+
+f. (postfix 0 2 3 1 (add) (mul) sel exec)
+5
+
+g. (postfix 0 0 (2 3 add) 4 sel exec)
+PostFixError: Seq expected on top of the stack while performing Exec
+ - stack: [Num 4]
+
+h. (postfix 0 1 (2 3 add) 4 sel exec)
+5
+
+i. (postfix 0 (5 6 lt) (2 3 add) 4 sel exec)
+PostFixError: Third parameter on the stack must be numeral to perform 'sel'
+ - stack: [Num 4,Seq [Num 2,Num 3,Add],Seq [Num 5,Num 6,Lt]]
+
+j. (postfix 0 (swap exec swap exec) (1 sub) swap (2 mul) swap 3 swap exec)
+5
+
