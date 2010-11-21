@@ -18,6 +18,7 @@ Cabal-version:       >=1.6
 Library
   Build-Depends:
       base >= 4 && < 5,
+      mtl,
       parsec
   Exposed-Modules:
       DCPL.PostFixEval
