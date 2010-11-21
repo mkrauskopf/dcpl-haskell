@@ -34,14 +34,27 @@ assertEvaluated toEval expected = either
     (evalString toEval)
 
 
+assertTopStackNumberArgsList :: [([Int], String, Int)] -> [Assertion]
+assertTopStackNumberArgsList = map uncurriedAPS
+  where uncurriedAPS (a,b,c) = assertTopStackNumberArgs a b c
+
+-- Asserts that the given PostFix program run with the initial given arguments
+-- evaluates to the given result.
+assertTopStackNumberArgs :: [Int]     -- ^ initial arguments
+                         -> String    -- ^ PostFix program
+                         -> Int       -- ^ expected result
+                         -> Assertion -- ^ resulting Assertion
+assertTopStackNumberArgs args toEval expected = either
+    (assertFailure . show)
+    (assertEqual "parser failed" (Num expected) . head)
+    (evalStringArgs args toEval)
+
+
 assertTopStackNumberList :: [(String, Int)] -> [Assertion]
 assertTopStackNumberList = map $ uncurry assertTopStackNumber
 
 assertTopStackNumber :: String -> Int -> Assertion
-assertTopStackNumber toEval expected = either
-    (assertFailure . show)
-    (assertEqual "parser failed" (Num expected) . head)
-    (evalString toEval)
+assertTopStackNumber = assertTopStackNumberArgs []
 
 
 assertPostFixesErrors :: [String] -> [Assertion]
@@ -76,6 +89,26 @@ main = runTests
 
          -- x c b a
         , ("2 5 4 3 4 nget 5 nget mul mul swap 4 nget mul add add", 25) -- a*(x^2) + b*x + c
+        ]
+
+   ++ assertTopStackNumberArgsList
+        -- (initial arguments, program, expected result)
+        [ ([3,4], "", 3)
+        , ([3,4], "swap", 4)
+        , ([3,4,5], "pop swap", 5)
+        , ([3], "4 sub", -1)
+        , ([3], "4 add 5 mul 6 sub 7 div", 4)
+        , ([7,6,5,4,3], "add mul sub swap div", -20)
+        , ([300,20,1], "4000 swap pop add", 4020)
+        , ([3,7], "add 2 div", 5) -- An averaging program.
+        , ([17], "3 div", 5)
+        , ([17], "3 rem", 2)
+        , ([1], "3 7 (sel) exec", 3)
+        , ([1], "3 7 sel", 3)
+        , ([1], "(1 2 add) (3 4 mul) sel exec", 3)
+        , ([3], "4 lt", 1)
+        , ([5], "4 lt", 0)
+        , ([3], "4 lt 10 add", 11)
         ]
    ++ assertPostFixesErrors
         -- erroneous program

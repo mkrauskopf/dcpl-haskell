@@ -44,27 +44,46 @@ type Stack = [Command]
 
 
 -- | User-level function for convenient usage.
+postfixArgs :: [Int] -> String -> String
+postfixArgs args toEval = either show show (evalToIntArgs args toEval)
+
+
+-- | User-level function for convenient usage.
 postfix :: String -> String
-postfix toEval = either show show (evalToInt toEval)
+postfix = postfixArgs []
 
 
 evalToInt :: String
           -> ThrowsError Int
-evalToInt toEval = do
-  res <- evalString toEval
+evalToInt = evalToIntArgs []
+
+
+evalToIntArgs :: [Int]
+              -> String
+              -> ThrowsError Int
+evalToIntArgs args toEval = do
+  res <- evalStringArgs args toEval
   case res of
     (Num n:_) -> return n
     stack     ->
       evalErrorS "The value at the top of the final stack is not an integer" stack
 
 
+-- | Evaluates PostFix program given as a string passing given initial list of
+-- arguments..
+evalStringArgs :: [Int]             -- ^ arguments
+               -> String            -- ^ commands to be executed as a string
+               -> ThrowsError Stack -- ^ result
+evalStringArgs args toEval = either
+  (throwError . PostFixParseError)
+  (\parsed -> eval [parsed, Exec] $ map Num args)
+  (parse parseList "postfix" toEval)
+
+
 -- | Evaluates PostFix program given as a string.
 evalString :: String            -- ^ commands to be executed as a string
            -> ThrowsError Stack -- ^ result
-evalString toEval = either
-  (throwError . PostFixParseError)
-  (\parsed -> eval [parsed, Exec] [])
-  (parse parseList "postfix" toEval)
+evalString = evalStringArgs []
 
 
 -- | Evaluates PostFix program given as a list of commands.
