@@ -1,0 +1,4 @@
+a. 2*a-5 where a is the only argument
+
+b. E.g. (postfix 1 "2 mul 5 sub")
+

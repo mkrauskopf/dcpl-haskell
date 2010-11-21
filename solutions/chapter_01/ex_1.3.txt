@@ -1,0 +1,9 @@
+a. (postfix 1 0 1 sel)
+
+b. (postfix 2 mul 0 gt)
+
+c. (postfix 2 swap 2 nget sel)
+
+d. (postfix 0 42 42 (mul 0 gt) exec)        -> 1  {and subroutine}
+   (postfix 0 42 42 (swap 2 nget sel) exec) -> 42 {short-circuit-and subroutine}
+
