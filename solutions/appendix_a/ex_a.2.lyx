@@ -1,0 +1,164 @@
+#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+If d
+\begin_inset Formula $_{\text{res\ensuremath{_{\text{1}}}}}$
+\end_inset
+
+ and d
+\begin_inset Formula $_{\text{res\ensuremath{_{\text{2}}}}}$
+\end_inset
+
+are expressions then:
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset Formula $\lambda$
+\end_inset
+
+s .
+ 
+\series bold
+if
+\series default
+
+\begin_inset Formula $_{D_{\text{res}}}$
+\end_inset
+
+(s ↓ 1 = 1) 
+\series bold
+then
+\series default
+ d
+\begin_inset Formula $_{\text{res\ensuremath{_{\text{1}}}}}$
+\end_inset
+
+
+\series bold
+else
+\series default
+ d
+\begin_inset Formula $_{\text{res\ensuremath{_{\text{2}}}}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset space ~
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If d
+\begin_inset Formula $_{\text{res\ensuremath{_{\text{1}}}}}$
+\end_inset
+
+ and d
+\begin_inset Formula $_{\text{res\ensuremath{_{\text{2}}}}}$
+\end_inset
+
+would be one-argument functions then:
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset Formula $\lambda$
+\end_inset
+
+s .
+ 
+\series bold
+if
+\series default
+
+\begin_inset Formula $_{D_{\text{res}}}$
+\end_inset
+
+(s ↓ 1 = 1) 
+\series bold
+then
+\series default
+ d
+\begin_inset Formula $_{\text{res\ensuremath{_{\text{1}}}}}$
+\end_inset
+
+(s ↓ 2)
+\series bold
+ else
+\series default
+ d
+\begin_inset Formula $_{\text{res\ensuremath{_{\text{2}}}}}$
+\end_inset
+
+(s ↓ 2)
+\end_layout
+
+\begin_layout Standard
+\begin_inset space ~
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where ↓ is a 
+\series bold
+projection
+\series default
+ (cf.
+ page 1152)
+\end_layout
+
+\end_body
+\end_document
