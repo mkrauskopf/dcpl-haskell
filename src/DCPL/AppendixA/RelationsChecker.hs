@@ -1,0 +1,67 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  DCPL.AppendixA.RelationsChecker
+-- Copyright   :  (c) Martin Krauskopf 2012
+-- License     :  BSD-style (see LICENSE)
+--
+-- Maintainer  :  martin.krauskopf@gmail.com
+--
+-- Helper for Exercise A.1.
+--
+module DCPL.AppendixA.RelationsChecker where
+
+import Data.List(intercalate, intersperse, subsequences, sortBy, groupBy)
+
+type E = Char -- element type
+type BinRel = [(E, E)] -- binary relation type
+
+-- test for a named property of a binary relation
+data BinRelPred = BinRelPred { bRel  :: [E] -> BinRel -> Bool
+                             , bName :: String
+                             }
+
+propPred :: [BinRelPred]
+propPred = [ BinRelPred isReflexive "reflexive"
+           , BinRelPred isSymmetric "symmetric"
+           , BinRelPred isAntisymmetric "antisymmetric"
+           , BinRelPred isTransitive "transitive"
+           ]
+
+-- Checkers are given relation together with set on which is it defined (needed
+-- for reflexivity check)
+isReflexive, isSymmetric, isAntisymmetric, isTransitive :: [E] -> BinRel -> Bool
+isReflexive xs rel = all (\x -> (x,x) `elem` rel) xs
+isSymmetric _ rel = all (\(x,y) -> (y,x) `elem` rel) rel
+isAntisymmetric _ rel = all (\(x,y) -> x == y || (y,x) `notElem` rel) rel
+isTransitive _ rel = and [ trans pair | pair <- rel ]
+  where trans (x,y) = and [ (x,v) `elem` rel | (u,v) <- rel, u == y ]
+
+-- Returns whether a given binary relation on a given set is:
+--   [ reflexive, symmetric, antisymmetric, transitive ]
+properties :: [E] -> BinRel -> [Bool]
+properties set rel = [ bRel pp set rel | pp <- propPred ]
+
+groupedResult :: [E] -> [[(BinRel, [Bool])]]
+groupedResult set = groupBy byProperties . sortBy propSorter $ [ (r, properties set r) | r <- allRels ]
+  where
+    allRels = subsequences [ (x,y) | x <- set, y <- set ] -- size 2^|set|^2 (subsequences == powerset)
+    byProperties (_,ps1) (_,ps2) = ps1 == ps2
+    propSorter (_,ps1) (_,ps2) = ps1 `compare` ps2
+
+
+-- Pretty-print the results.
+main :: IO ()
+main = do
+  putStrLn $ "Properties of binary relations defined on a set " ++ showSet set ++ ":"
+  mapM_ (putStrLn . showGroupLength) result
+  putStrLn "\nIndividual relation:"
+  mapM_ (putStrLn . (" " ++) . showGroup) result
+    where
+      set  = "abc"
+      result = groupedResult set
+      showGroup xs@(x:_) = showProps x ++ "\n\t" ++ intercalate "\n\t" (map (show . fst) xs)
+      showGroupLength xs@(x:_) = " " ++ showProps x ++ ": " ++ show (length xs)
+      names = map bName propPred
+      showProps (_,bs) = show $ map snd $ filter fst (zip bs names)
+      showSet = ("{" ++) . (++ "}") . intersperse ','
+
