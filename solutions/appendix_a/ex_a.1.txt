@@ -1,0 +1,29 @@
+Solution to Exercise A.1
+------------------------
+
+R - Reflexive     : for all a from A,      aRa
+S - Symmetric     : for all a,b from A,    aRb => bRa
+A - Antisymmetric : for all a,b from A,    aRb ∧ bRa => a=b
+T - Transitive    : for all a,b,c from A,  aRb ∧ bRc => aRc
+
+X = {a,b,c}
+
+properties |  #R | examples
+-----------+-----+--------------------------------------------------
+{}         | 204 | {(a,b), (a,c), (b,a)}
+{T}        |   6 | {(a,a), (a,b), (a,c), (b,a), (b,b), (b,c)}
+{A}        |  56 | {(a,b), (b,c)}
+{A,T}      | 126 | {(a,b)} or {(a,b), (b,c), (a,c)}
+{S}        |  46 | {(a,b), (b,a)}
+{S,T}      |   3 | {(a,a), (a,b), (b,a), (b,b)}
+{S,A}      |   0 | No such relation
+{S,A,T}    |   7 | {(a,a)} or {(a,a), (b,b)} or {} (empty set)
+{R}        |  24 | {(a,a), (a,b), (a,c), (b,a), (b,b), (c,c)}
+{R,T}      |   6 | {(a,a), (a,b), (a,c), (b,a), (b,b), (b,c), (c,c)}
+{R,A}      |   8 | {(a,a), (a,c), (b,a), (b,b), (c,c)}
+{R,A,T}    |  18 | {(a,a), (b,b), (c,c), (a,b)}
+{R,S}      |   3 | {(a,a), (a,b), (a,c), (b,a), (b,b), (c,a), (c,c)}
+{R,S,T}    |   4 | [(a,a), (a,b), (b,a), (b,b), (c,c)]
+{R,S,A}    |   0 | No such relation
+{R,S,A,T}  |   1 | {(a,a), (b,b), (c,c)} (the only one)
+
