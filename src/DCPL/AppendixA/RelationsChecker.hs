@@ -8,9 +8,10 @@
 --
 -- Helper for Exercise A.1.
 --
-module DCPL.AppendixA.RelationsChecker where
+module Main where
 
 import Data.List(intercalate, intersperse, subsequences, sortBy, groupBy)
+import System.Environment(getArgs)
 
 type E = Char -- element type
 type BinRel = [(E, E)] -- binary relation type
@@ -52,16 +53,17 @@ groupedResult set = groupBy byProperties . sortBy propSorter $ [ (r, properties 
 -- Pretty-print the results.
 main :: IO ()
 main = do
-  putStrLn $ "Properties of binary relations defined on a set " ++ showSet set ++ ":"
-  mapM_ (putStrLn . showGroupLength) result
-  putStrLn "\nIndividual relation:"
-  mapM_ (putStrLn . (" " ++) . showGroup) result
-    where
-      set  = "abc"
-      result = groupedResult set
-      showGroup xs@(x:_) = showProps x ++ "\n\t" ++ intercalate "\n\t" (map (show . fst) xs)
+  args <- getArgs
+  let set                      = if null args then "abc" else head args
+      result                   = groupedResult set
+      names                    = map bName propPred
+      showProps (_,bs)         = show $ map snd $ filter fst (zip bs names)
+      showSet                  = ("{" ++) . (++ "}") . intersperse ','
+      showGroup xs@(x:_)       = showProps x ++ "\n\t" ++ intercalate "\n\t" (map (show . fst) xs)
       showGroupLength xs@(x:_) = " " ++ showProps x ++ ": " ++ show (length xs)
-      names = map bName propPred
-      showProps (_,bs) = show $ map snd $ filter fst (zip bs names)
-      showSet = ("{" ++) . (++ "}") . intersperse ','
+   in do
+      putStrLn $ "Properties of binary relations defined on a set " ++ showSet set ++ ":"
+      mapM_ (putStrLn . showGroupLength) result
+      putStrLn "\nIndividual relation:"
+      mapM_ (putStrLn . (" " ++) . showGroup) result
 
