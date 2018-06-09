@@ -1,10 +1,17 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  DCPL.AppendixA.RelationsChecker
--- Copyright   :  (c) Martin Krauskopf 2012
+-- Copyright   :  (c) Martin Krauskopf 2012-2018
 -- License     :  BSD-style (see LICENSE)
 --
 -- Maintainer  :  martin.krauskopf@gmail.com
+--
+-- Takes as an input a set and generates relations on the given set for all
+-- possible relations combined from reflexive, symmetric, antisymmetric and
+-- transitive properties. That is 16 combinations.
+--
+-- The output consists of the cardinality (number of elements) and enumeration
+-- of all pairs of every relation.
 --
 -- Helper for Exercise A.1.
 --
